@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final counter = StateProvider<int>((ref) { /// To manage small state changes StateProvider is used
-  return 0;
-});
-final switchProvider = StateProvider<bool>((ref) {
-  return false;
-});
+import 'package:riverpod_basic/slider_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -21,42 +15,35 @@ class HomeScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Consumer( /// To define which widget should be change when the state changes
-              builder: (context, ref, child) {
-                final age = ref.watch(counter);
-                return Text(age.toString(), style: const TextStyle(fontSize: 24)); /// Here only the text will change and rebuild
-              }
-            ),
-            SizedBox(height: 32),
             Consumer(
               builder: (context, ref, child) {
-                final switchValue = ref.watch(switchProvider);
-                return Switch(
-                  value: switchValue,
-                  onChanged: (value) {
-                    ref.read(switchProvider.notifier).state = value;
-                  },
+                final sliderValue = ref.watch(sliderProvider);
+                return Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.blueAccent.withOpacity(sliderValue),
+                  ),
                 );
-              },
+              }
             ),
-            SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    ref.read(counter.notifier).state--; /// state will be changed and value of the provider will be decreased
-                  },
-                  child: const Icon(Icons.remove),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    ref.read(counter.notifier).state++; /// state will be changed and value of the provider will be increased
-                  },
-                  child: const Icon(Icons.add),
-                ),
-              ],
-            )
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final sliderValue = ref.watch(sliderProvider);
+                  return Slider(
+                    value: sliderValue,
+                    onChanged: (value) {
+                      ref.read(sliderProvider.notifier).state = value;
+                    },
+                  );
+                }
+              ),
+            ),
           ],
         ),
       ),
